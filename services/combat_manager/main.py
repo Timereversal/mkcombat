@@ -1,8 +1,21 @@
-from typing import Union
-from fastapi import FastAPI
-from heroes import create_db_and_tables
 
-app = FastAPI()
+from typing import Annotated
+from fastapi import FastAPI, Depends, HTTPException, Query
+#from heroes import create_db_and_tables, Hero, SessionDep, HeroPublic
+#import models
+from combat_manager.database import engine
+
+from combat_manager.routes import user
+
+
+
+def create_application():
+    application = FastAPI()
+    application.include_router(user.user_router)
+    return application
+
+app = create_application()
+#models.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
@@ -12,9 +25,4 @@ def read_root():
 @app.get("/register")
 def user_register():
     return {'Hello': "World"}
-
-@app.get("/startup")
-def on_startup():
-    print("test")
-    create_db_and_tables()
 
